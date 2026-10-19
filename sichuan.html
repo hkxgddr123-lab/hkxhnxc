@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>天府四川 · 欢迎您</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e8f0e8 100%);
+      color: #333; min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(90deg, #1a6b3c, #2e9e5b);
+      color: #fff; padding: 14px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: sticky; top: 0; z-index: 10;
+    }
+    header h1 { font-size: 22px; }
+    .head-right { display: flex; align-items: center; gap: 18px; }
+    /* 省份切换下拉框 */
+    select#pageSwitch {
+      padding: 8px 14px;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      background: #fff;
+      color: #333;
+      cursor: pointer;
+      outline: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    nav a { color: #fff; text-decoration: none; font-size: 15px; opacity: 0.9; }
+    nav a:hover { opacity: 1; text-decoration: underline; }
+    .hero {
+      text-align: center; padding: 80px 20px 60px;
+      background: linear-gradient(rgba(20,20,20,0.45), rgba(20,20,20,0.45)),
+                  radial-gradient(circle at 30% 40%, #2e9e5b, #1a6b3c);
+      color: #fff;
+    }
+    .hero h2 { font-size: 42px; margin-bottom: 16px; letter-spacing: 4px; }
+    .hero p { font-size: 18px; opacity: 0.9; }
+    .hero button {
+      margin-top: 28px; padding: 12px 36px; font-size: 16px; border: none;
+      border-radius: 24px; background: #ffb400; color: #333; cursor: pointer;
+      font-weight: bold; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hero button:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.25); }
+    .cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 28px; max-width: 1160px; margin: -30px auto 0; padding: 0 20px;
+    }
+    .card {
+      background: #fff; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      transition: transform 0.25s, box-shadow 0.25s;
+      display: flex; flex-direction: column; cursor: pointer;
+    }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 10px 24px rgba(0,0,0,0.14); }
+    .card img { width: 100%; height: 180px; object-fit: cover; display: block; }
+    .card .body { padding: 20px 22px 24px; }
+    .card h3 { font-size: 19px; margin-bottom: 10px; color: #1a6b3c; display: flex; align-items: center; gap: 8px; }
+    .card p { font-size: 14px; color: #666; line-height: 1.75; text-align: justify; }
+    .card .tag { display: inline-block; margin-top: 12px; font-size: 12px; color: #1a6b3c; background: #e6f4ea; border-radius: 10px; padding: 3px 10px; }
+    .card .more { margin-top: 10px; font-size: 13px; color: #2e9e5b; font-weight: bold; }
+    .modal-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; padding: 24px; }
+    .modal-mask.show { display: flex; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal { background: #fff; border-radius: 16px; width: 100%; max-width: 760px; max-height: 86vh; overflow-y: auto; position: relative; animation: popUp 0.28s ease; }
+    @keyframes popUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .modal img.cover { width: 100%; height: 280px; object-fit: cover; display: block; border-radius: 16px 16px 0 0; }
+    .modal .close-btn {
+      position: sticky; top: 12px; margin-left: calc(100% - 56px);
+      width: 40px; height: 40px; border: none; border-radius: 50%;
+      background: rgba(0,0,0,0.45); color: #fff; font-size: 20px; cursor: pointer;
+      line-height: 1; margin-top: -292px; margin-bottom: 252px;
+    }
+    .modal .close-btn:hover { background: rgba(0,0,0,0.7); }
+    .modal .detail { padding: 26px 32px 32px; }
+    .modal .detail h2 { color: #1a6b3c; font-size: 26px; margin-bottom: 14px; }
+    .modal .detail p.intro { font-size: 15px; line-height: 1.9; color: #555; text-align: justify; margin-bottom: 18px; }
+    .modal .detail h4 { font-size: 15px; color: #1a6b3c; margin: 16px 0 8px; border-left: 4px solid #2e9e5b; padding-left: 8px; }
+    .modal .detail ul { list-style: none; }
+    .modal .detail ul li { font-size: 14px; color: #666; line-height: 1.9; padding-left: 18px; position: relative; }
+    .modal .detail ul li::before { content: ""; position: absolute; left: 2px; top: 11px; width: 7px; height: 7px; border-radius: 50%; background: #2e9e5b; }
+    .modal .fact { margin-top: 18px; background: #fff8e6; border: 1px solid #ffe3a0; border-radius: 10px; padding: 12px 16px; font-size: 13.5px; color: #8a6d1a; line-height: 1.8; }
+    footer { text-align: center; padding: 30px 20px; margin-top: 60px; background: #1a6b3c; color: rgba(255,255,255,0.75); font-size: 13px; line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🐼 天府四川</h1>
+    <div class="head-right">
+      <nav><a href="#features">本页特色</a></nav>
+      <!-- 省份切换下拉框：选择后跳转到对应页面 -->
+      <select id="pageSwitch" onchange="switchPage(this.value)" title="切换省份页面">
+        <option value="sichuan.html" selected>🐼 四川</option><option value="henan.html">🏛️ 河南</option><option value="guangdong.html">🌃 广东</option>
+      </select>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h2>天府之国 · 锦绣四川</h2>
+    <p>大熊猫的故乡，美食与美景的天堂</p>
+    <button onclick="alert('欢迎来到四川！🌶️')">开始探索</button>
+  </section>
+
+  <section class="cards" id="features">
+    <div class="card" onclick="openDetail('panda')">
+      <img src="images/panda.jpg" alt="成都大熊猫繁育研究基地里的大熊猫">
+      <div class="body">
+        <h3>🐼 大熊猫</h3>
+        <p>大熊猫是中国国宝，全球八成以上野生大熊猫栖息在四川的岷山、崃等山系。成都大熊猫繁育研究基地可以近距离观赏“滚滚”吃竹子、爬树、打滚的憨态。</p>
+        <span class="tag">国宝故乡</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+    <div class="card" onclick="openDetail('food')">
+      <img src="images/food.jpg" alt="红油翻滚的四川火锅">
+      <div class="body">
+        <h3>🌶️ 川菜美食</h3>
+        <p>川菜位列中国八大菜系，以“一菜一格、百菜百味”著称。红油火锅麻辣鲜香、烫煮百味；麻婆豆腐、回锅肉、担担面各具风情，油而不腻、回味悠长。</p>
+        <span class="tag">麻辣鲜香</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+    <div class="card" onclick="openDetail('nature')">
+      <img src="images/nature.jpg" alt="九寨沟五花海秋色">
+      <div class="body">
+        <h3>🏔️ 自然风光</h3>
+        <p>四川山水冠绝天下：九寨沟翠海叠瀑、五彩斑斓，被誉为“童话世界”；黄龙彩池奇幻，峨眉秀甲天下，贡嘎雪山巍然入云。</p>
+        <span class="tag">世界遗产</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+    <div class="card" onclick="openDetail('history')">
+      <img src="images/history.jpg" alt="三星堆出土的青铜兽面具">
+      <div class="body">
+        <h3>🏛️ 古蜀文明</h3>
+        <p>三星堆遗址距今约3000至5000年，青铜大立人、纵目面具、青铜神树惊艳世界；与金沙遗址、都江堰一起见证古蜀文明的辉煌。</p>
+        <span class="tag">千年古蜀</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal-mask" id="modalMask" onclick="if(event.target===this)closeDetail()">
+    <div class="modal">
+      <img class="cover" id="modalImg" src="" alt="">
+      <button class="close-btn" onclick="closeDetail()" title="关闭">✕</button>
+      <div class="detail">
+        <h2 id="modalTitle"></h2>
+        <p class="intro" id="modalIntro"></p>
+        <h4 id="modalListTitle"></h4>
+        <ul id="modalList"></ul>
+        <div class="fact" id="modalFact"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 天府四川 · 欢迎您 · 这是一个简单的示例页面</p>
+    <p>配图来源：Wikimedia Commons（开放授权图片）</p>
+  </footer>
+
+  <script>
+    // 下拉框切换省份页面
+    function switchPage(url) { if (url) location.href = url; }
+    const DETAILS = {
+      panda: {
+        img: "images/panda.jpg",
+        title: "🐼 大熊猫 · 国宝故乡",
+        intro: "大熊猫（学名 Ailuropoda melanoleuca）已在地球上生存了至少800万年，被誉为“活化石”和“中国国宝”。全球80%以上的野生大熊猫栖息于四川的岷山、崃山、梁山等山系，四川是名副其实的大熊猫故乡。",
+        listTitle: "推荐打卡地",
+        list: ["成都大熊猫繁育研究基地：近距离观看大熊猫幼崽和“熊猫幼儿园”","都江堰熊猫谷：半野生环境中的大熊猫与散养小熊猫","卧龙国家级自然保护区：大熊猫野外栖息地与科研中心","雅安碧峰峡基地：可参与大熊猫志愿者体验项目"],
+        fact: "💡 小知识：一只成年大熊猫每天要花10~14小时吃竹子，食量可达10~20公斤；刚出生的熊猫宝宝只有约100克重，是妈妈体重的1/900。"
+      },
+      food: {
+        img: "images/food.jpg",
+        title: "🌶️ 川菜美食 · 麻辣鲜香",
+        intro: "川菜是中国八大菜系之一，历史超过两千年，以麻、辣、鲜、香为特色，讲究“一菜一格、百菜百味”，拥有鱼香、家常、麻辣等二十四种经典味型，是中国民间普及度最高的菜系之一。",
+        listTitle: "代表美食",
+        list: ["四川火锅：牛油红汤麻辣滚烫，毛肚鸭肠黄喉是灵魂配菜","麻婆豆腐：麻辣烫香酥嫩鲜活八字俱全","回锅肉：川菜第一家常菜，灯影牛肉片薄如纸","担担面、夫妻肺片、口水鸡：街头巷尾的经典小吃"],
+        fact: "💡 小知识：2010年成都被联合国教科文组织授予“美食之都”称号，是亚洲首个获此殊荣的城市；川菜常用的花椒产自汉源，“麻”味正是川菜的灵魂。"
+      },
+      nature: {
+        img: "images/nature.jpg",
+        title: "🏔️ 自然风光 · 世界遗产",
+        intro: "四川地势西高东低，雪山、草原、峡谷与盆地并存。九寨沟以“翠海、叠瀑、彩林、雪峰”闻名于世；黄龙钙华彩池奇幻瑰丽；峨眉山秀甲天下，贡嘎雪山巍然入云，构成中国最丰富的自然景观长廊。",
+        listTitle: "推荐打卡地",
+        list: ["九寨沟：五花海、诺日朗瀑布、五彩池","黄龙：三千余座钙华彩池如巨龙蜿蜒","峨眉山—乐山大佛：佛教名山与世界第一大石刻坐佛","稻城亚丁：雪山冰川下的“蓝色星球最后净土”"],
+        fact: "💡 小知识：九寨沟于1992年被列入世界自然遗产名录，沟内114个海子因富含碳酸钙与藻类，在阳光下呈现蓝绿交织的梦幻色彩。"
+      },
+      history: {
+        img: "images/history.jpg",
+        title: "🏛️ 古蜀文明 · 千年古蜀",
+        intro: "三星堆遗址位于四川广汉，距今约4800至3100年，出土的青铜大立人、青铜神树、金面罩铜头像等文物造型奇特、工艺精湛，改写了人们对古蜀历史的认知，被誉为“20世纪人类最伟大的考古发现之一”。",
+        listTitle: "推荐打卡地",
+        list: ["三星堆博物馆：青铜大立人、纵目面具、金杖","金沙遗址博物馆：太阳神鸟金饰，中国文化遗产标志原型","都江堰：公元前256年李冰主持修建，至今仍在使用","武侯祠、杜甫草堂：三国文化与唐诗记忆"],
+        fact: "💡 小知识：三星堆一号青铜神树高3.96米，是全世界已发现的最大的单件青铜文物；2021年新发现的6个祭祀坑又出土了金面具、顶尊跪人像等上千件文物。"
+      }
+    };
+    function openDetail(id) {
+      const d = DETAILS[id];
+      if (!d) return;
+      document.getElementById("modalImg").src = d.img;
+      document.getElementById("modalImg").alt = d.title;
+      document.getElementById("modalTitle").textContent = d.title;
+      document.getElementById("modalIntro").textContent = d.intro;
+      document.getElementById("modalListTitle").textContent = d.listTitle;
+      const ul = document.getElementById("modalList");
+      ul.innerHTML = "";
+      d.list.forEach(t => { const li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+      document.getElementById("modalFact").textContent = d.fact;
+      document.getElementById("modalMask").classList.add("show");
+      document.body.style.overflow = "hidden";
+    }
+    function closeDetail() {
+      document.getElementById("modalMask").classList.remove("show");
+      document.body.style.overflow = "";
+    }
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetail(); });
+  </script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中原河南 · 欢迎您</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #f0e9df 100%);
+      color: #333; min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(90deg, #6e4a22, #a9743c);
+      color: #fff; padding: 14px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: sticky; top: 0; z-index: 10;
+    }
+    header h1 { font-size: 22px; }
+    .head-right { display: flex; align-items: center; gap: 18px; }
+    /* 省份切换下拉框 */
+    select#pageSwitch {
+      padding: 8px 14px;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      background: #fff;
+      color: #333;
+      cursor: pointer;
+      outline: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    nav a { color: #fff; text-decoration: none; font-size: 15px; opacity: 0.9; }
+    nav a:hover { opacity: 1; text-decoration: underline; }
+    .hero {
+      text-align: center; padding: 80px 20px 60px;
+      background: linear-gradient(rgba(20,20,20,0.45), rgba(20,20,20,0.45)),
+                  radial-gradient(circle at 30% 40%, #a9743c, #6e4a22);
+      color: #fff;
+    }
+    .hero h2 { font-size: 42px; margin-bottom: 16px; letter-spacing: 4px; }
+    .hero p { font-size: 18px; opacity: 0.9; }
+    .hero button {
+      margin-top: 28px; padding: 12px 36px; font-size: 16px; border: none;
+      border-radius: 24px; background: #ffb400; color: #333; cursor: pointer;
+      font-weight: bold; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hero button:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.25); }
+    .cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 28px; max-width: 1160px; margin: -30px auto 0; padding: 0 20px;
+    }
+    .card {
+      background: #fff; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      transition: transform 0.25s, box-shadow 0.25s;
+      display: flex; flex-direction: column; cursor: pointer;
+    }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 10px 24px rgba(0,0,0,0.14); }
+    .card img { width: 100%; height: 180px; object-fit: cover; display: block; }
+    .card .body { padding: 20px 22px 24px; }
+    .card h3 { font-size: 19px; margin-bottom: 10px; color: #6e4a22; display: flex; align-items: center; gap: 8px; }
+    .card p { font-size: 14px; color: #666; line-height: 1.75; text-align: justify; }
+    .card .tag { display: inline-block; margin-top: 12px; font-size: 12px; color: #6e4a22; background: #f3e8d8; border-radius: 10px; padding: 3px 10px; }
+    .card .more { margin-top: 10px; font-size: 13px; color: #a9743c; font-weight: bold; }
+    .modal-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; padding: 24px; }
+    .modal-mask.show { display: flex; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal { background: #fff; border-radius: 16px; width: 100%; max-width: 760px; max-height: 86vh; overflow-y: auto; position: relative; animation: popUp 0.28s ease; }
+    @keyframes popUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .modal img.cover { width: 100%; height: 280px; object-fit: cover; display: block; border-radius: 16px 16px 0 0; }
+    .modal .close-btn {
+      position: sticky; top: 12px; margin-left: calc(100% - 56px);
+      width: 40px; height: 40px; border: none; border-radius: 50%;
+      background: rgba(0,0,0,0.45); color: #fff; font-size: 20px; cursor: pointer;
+      line-height: 1; margin-top: -292px; margin-bottom: 252px;
+    }
+    .modal .close-btn:hover { background: rgba(0,0,0,0.7); }
+    .modal .detail { padding: 26px 32px 32px; }
+    .modal .detail h2 { color: #6e4a22; font-size: 26px; margin-bottom: 14px; }
+    .modal .detail p.intro { font-size: 15px; line-height: 1.9; color: #555; text-align: justify; margin-bottom: 18px; }
+    .modal .detail h4 { font-size: 15px; color: #6e4a22; margin: 16px 0 8px; border-left: 4px solid #a9743c; padding-left: 8px; }
+    .modal .detail ul { list-style: none; }
+    .modal .detail ul li { font-size: 14px; color: #666; line-height: 1.9; padding-left: 18px; position: relative; }
+    .modal .detail ul li::before { content: ""; position: absolute; left: 2px; top: 11px; width: 7px; height: 7px; border-radius: 50%; background: #a9743c; }
+    .modal .fact { margin-top: 18px; background: #fff8e6; border: 1px solid #ffe3a0; border-radius: 10px; padding: 12px 16px; font-size: 13.5px; color: #8a6d1a; line-height: 1.8; }
+    footer { text-align: center; padding: 30px 20px; margin-top: 60px; background: #6e4a22; color: rgba(255,255,255,0.75); font-size: 13px; line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🏛️ 中原河南</h1>
+    <div class="head-right">
+      <nav><a href="#features">本页特色</a></nav>
+      <!-- 省份切换下拉框：选择后跳转到对应页面 -->
+      <select id="pageSwitch" onchange="switchPage(this.value)" title="切换省份页面">
+        <option value="sichuan.html">🐼 四川</option><option value="henan.html" selected>🏛️ 河南</option><option value="guangdong.html">🌃 广东</option>
+      </select>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h2>中原老家 · 厚重河南</h2>
+    <p>少林祖庭、龙门石刻，华夏文明的摇篮</p>
+    <button onclick="alert('欢迎来到河南！🍜')">开始探索</button>
+  </section>
+
+  <section class="cards" id="features">
+    <div class="card" onclick="openDetail('longmen')">
+      <img src="images/hn_longmen.jpg" alt="龙门石窟奉先寺卢舍那大佛">
+      <div class="body">
+        <h3>🗿 龙门石窟</h3>
+        <p>洛阳龙门石窟始凿于北魏，历经400余年营造，现存造像10万余尊。奉先寺卢舍那大佛雍容庄严，2000年被列入世界文化遗产。</p>
+        <span class="tag">世界遗产</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+    <div class="card" onclick="openDetail('shaolin')">
+      <img src="images/hn_shaolin.jpg" alt="嵩山少林寺山门">
+      <div class="body">
+        <h3>🥋 少林功夫</h3>
+        <p>嵩山少林寺是中国禅宗祖庭、天下武术圣地。“天下功夫出少林”，少林功夫已列入国家级非物质文化遗产名录。</p>
+        <span class="tag">禅武祖庭</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+    <div class="card" onclick="openDetail('nature')">
+      <img src="images/hn_nature.jpg" alt="云台山泉瀑峡峡谷溪流">
+      <div class="body">
+        <h3>🏞️ 山水中原</h3>
+        <p>云台山以红石峡、瀑泉闻名，是世界地质公园；黄河自西向东横贯豫北平原，孕育了华夏文明的摇篮。</p>
+        <span class="tag">世界地质公园</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+    <div class="card" onclick="openDetail('food')">
+      <img src="images/hn_food.jpg" alt="一碗河南烩面配香菜糖蒜">
+      <div class="body">
+        <h3>🍜 中原美食</h3>
+        <p>河南烩面汤浓面筋，是中原味道的名片；洛阳水席、开封灌汤包各承千年饮食传统，厚重而温暖。</p>
+        <span class="tag">豫菜千年</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal-mask" id="modalMask" onclick="if(event.target===this)closeDetail()">
+    <div class="modal">
+      <img class="cover" id="modalImg" src="" alt="">
+      <button class="close-btn" onclick="closeDetail()" title="关闭">✕</button>
+      <div class="detail">
+        <h2 id="modalTitle"></h2>
+        <p class="intro" id="modalIntro"></p>
+        <h4 id="modalListTitle"></h4>
+        <ul id="modalList"></ul>
+        <div class="fact" id="modalFact"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 中原河南 · 欢迎您 · 这是一个简单的示例页面</p>
+    <p>配图来源：Wikimedia Commons（开放授权图片）</p>
+  </footer>
+
+  <script>
+    // 下拉框切换省份页面
+    function switchPage(url) { if (url) location.href = url; }
+    const DETAILS = {
+      longmen: {
+        img: "images/hn_longmen.jpg",
+        title: "🗿 龙门石窟 · 世界遗产",
+        intro: "龙门石窟位于河南洛阳城南的伊河两岸，始凿于北魏孝文帝迁都洛阳之际，历经东魏、西魏、北齐、隋、唐、五代连续营造400余年。现存窟龛2345个、造像10万余尊、碑刻题记2800余品，是中国石刻艺术的巅峰瑰宝之一。",
+        listTitle: "推荐打卡点",
+        list: ["奉先寺：卢舍那大佛高17.14米，相传以武则天面容为原型","宾阳三洞：北魏皇家开窟的代表作","古阳洞：“龙门二十品”魏碑书法的集中地","白园：唐代诗人白居易的墓园，位于景区内"],
+        fact: "💡 小知识：卢舍那大佛的“卢舍那”意为“光明普照”，大佛面部丰满圆润、嘴角微含笑意的神态，被誉为“东方的蒙娜丽莎”。"
+      },
+      shaolin: {
+        img: "images/hn_shaolin.jpg",
+        title: "🥋 少林功夫 · 禅武祖庭",
+        intro: "少林寺位于河南登封嵩山少室山麓，始建于北魏太和十九年（公元495年）。达摩祖师在此面壁九年创立禅宗，少林武僧以武参禅、代代相传，使少林寺成为中国佛教禅宗祖庭与天下武术圣地。",
+        listTitle: "推荐打卡点",
+        list: ["少林寺常住院：山门、碑廊、千佛殿一线古建","塔林：中国现存规模最大的古塔群，240余座","少林武术表演：武僧团每日定时演出硬气功与拳械","嵩山风景区：五岳之中岳，少室山与太室山双峰并峙"],
+        fact: "💡 小知识：千佛殿内保存着僧人历代练武踩出的“脚窝”——青砖地面上48个深坑，是少林功夫千年传承的实物见证。"
+      },
+      nature: {
+        img: "images/hn_nature.jpg",
+        title: "🏞️ 山水中原 · 世界地质公园",
+        intro: "河南地跨黄河、淮河、长江、海河四大流域，西伏牛山、北倚太行、东接华北平原。云台山以红石峡、潭瀑峡的北方岩溶山水著称；黄河小浪底、嵩山峻极峰共同构成“山河祖国”的壮美画卷。",
+        listTitle: "推荐打卡点",
+        list: ["云台山：红石峡、潭瀑峡、茱萸峰","嵩山：五岳之中，少林寺与嵩阳书院所在","黄河小浪底：每年调水调沙时的排沙奇观","白云山：豫西原始森林与云海日出"],
+        fact: "💡 小知识：云台山红石峡是北方罕见的丹霞式峡谷，谷中紫红色石英砂岩形成于约12亿年前，被称为“盆景峡谷”。"
+      },
+      food: {
+        img: "images/hn_food.jpg",
+        title: "🍜 中原美食 · 豫菜千年",
+        intro: "豫菜是中国起源最早的菜系之一，以“中州味道”讲究五味调和。河南烩面汤白面筋、配菜丰富；洛阳水席二十四道菜品道道带汤、行云流水；开封灌汤包“轻轻提、慢慢移、先开窗、后喝汤”，中原风味醇厚绵长。",
+        listTitle: "代表美食",
+        list: ["河南烩面：羊肉浓汤、宽面筋道，配香菜与糖蒜","洛阳水席：二十四道菜汤水相续、上菜如行云流水","开封灌汤包：皮薄馅大、汤汁充盈的百年名点","胡辣汤：胡椒辛香暖胃的中原早餐灵魂"],
+        fact: "💡 小知识：洛阳水席始于唐代，因上菜一道接一道如行云流水而得名，全套24道菜对应武则天执政的24年，被称为中国宴席的“活化石”。"
+      }
+    };
+    function openDetail(id) {
+      const d = DETAILS[id];
+      if (!d) return;
+      document.getElementById("modalImg").src = d.img;
+      document.getElementById("modalImg").alt = d.title;
+      document.getElementById("modalTitle").textContent = d.title;
+      document.getElementById("modalIntro").textContent = d.intro;
+      document.getElementById("modalListTitle").textContent = d.listTitle;
+      const ul = document.getElementById("modalList");
+      ul.innerHTML = "";
+      d.list.forEach(t => { const li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+      document.getElementById("modalFact").textContent = d.fact;
+      document.getElementById("modalMask").classList.add("show");
+      document.body.style.overflow = "hidden";
+    }
+    function closeDetail() {
+      document.getElementById("modalMask").classList.remove("show");
+      document.body.style.overflow = "";
+    }
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetail(); });
+  </script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>岭南广东 · 欢迎您</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e3eef2 100%);
+      color: #333; min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(90deg, #0a4f63, #0e7490);
+      color: #fff; padding: 14px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: sticky; top: 0; z-index: 10;
+    }
+    header h1 { font-size: 22px; }
+    .head-right { display: flex; align-items: center; gap: 18px; }
+    /* 省份切换下拉框 */
+    select#pageSwitch {
+      padding: 8px 14px;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      background: #fff;
+      color: #333;
+      cursor: pointer;
+      outline: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    nav a { color: #fff; text-decoration: none; font-size: 15px; opacity: 0.9; }
+    nav a:hover { opacity: 1; text-decoration: underline; }
+    .hero {
+      text-align: center; padding: 80px 20px 60px;
+      background: linear-gradient(rgba(20,20,20,0.45), rgba(20,20,20,0.45)),
+                  radial-gradient(circle at 30% 40%, #0e7490, #0a4f63);
+      color: #fff;
+    }
+    .hero h2 { font-size: 42px; margin-bottom: 16px; letter-spacing: 4px; }
+    .hero p { font-size: 18px; opacity: 0.9; }
+    .hero button {
+      margin-top: 28px; padding: 12px 36px; font-size: 16px; border: none;
+      border-radius: 24px; background: #ffb400; color: #333; cursor: pointer;
+      font-weight: bold; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hero button:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.25); }
+    .cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 28px; max-width: 1160px; margin: -30px auto 0; padding: 0 20px;
+    }
+    .card {
+      background: #fff; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      transition: transform 0.25s, box-shadow 0.25s;
+      display: flex; flex-direction: column; cursor: pointer;
+    }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 10px 24px rgba(0,0,0,0.14); }
+    .card img { width: 100%; height: 180px; object-fit: cover; display: block; }
+    .card .body { padding: 20px 22px 24px; }
+    .card h3 { font-size: 19px; margin-bottom: 10px; color: #0a4f63; display: flex; align-items: center; gap: 8px; }
+    .card p { font-size: 14px; color: #666; line-height: 1.75; text-align: justify; }
+    .card .tag { display: inline-block; margin-top: 12px; font-size: 12px; color: #0a4f63; background: #e0f2f6; border-radius: 10px; padding: 3px 10px; }
+    .card .more { margin-top: 10px; font-size: 13px; color: #0e7490; font-weight: bold; }
+    .modal-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; padding: 24px; }
+    .modal-mask.show { display: flex; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal { background: #fff; border-radius: 16px; width: 100%; max-width: 760px; max-height: 86vh; overflow-y: auto; position: relative; animation: popUp 0.28s ease; }
+    @keyframes popUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .modal img.cover { width: 100%; height: 280px; object-fit: cover; display: block; border-radius: 16px 16px 0 0; }
+    .modal .close-btn {
+      position: sticky; top: 12px; margin-left: calc(100% - 56px);
+      width: 40px; height: 40px; border: none; border-radius: 50%;
+      background: rgba(0,0,0,0.45); color: #fff; font-size: 20px; cursor: pointer;
+      line-height: 1; margin-top: -292px; margin-bottom: 252px;
+    }
+    .modal .close-btn:hover { background: rgba(0,0,0,0.7); }
+    .modal .detail { padding: 26px 32px 32px; }
+    .modal .detail h2 { color: #0a4f63; font-size: 26px; margin-bottom: 14px; }
+    .modal .detail p.intro { font-size: 15px; line-height: 1.9; color: #555; text-align: justify; margin-bottom: 18px; }
+    .modal .detail h4 { font-size: 15px; color: #0a4f63; margin: 16px 0 8px; border-left: 4px solid #0e7490; padding-left: 8px; }
+    .modal .detail ul { list-style: none; }
+    .modal .detail ul li { font-size: 14px; color: #666; line-height: 1.9; padding-left: 18px; position: relative; }
+    .modal .detail ul li::before { content: ""; position: absolute; left: 2px; top: 11px; width: 7px; height: 7px; border-radius: 50%; background: #0e7490; }
+    .modal .fact { margin-top: 18px; background: #fff8e6; border: 1px solid #ffe3a0; border-radius: 10px; padding: 12px 16px; font-size: 13.5px; color: #8a6d1a; line-height: 1.8; }
+    footer { text-align: center; padding: 30px 20px; margin-top: 60px; background: #0a4f63; color: rgba(255,255,255,0.75); font-size: 13px; line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🌃 岭南广东</h1>
+    <div class="head-right">
+      <nav><a href="#features">本页特色</a></nav>
+      <!-- 省份切换下拉框：选择后跳转到对应页面 -->
+      <select id="pageSwitch" onchange="switchPage(this.value)" title="切换省份页面">
+        <option value="sichuan.html">🐼 四川</option><option value="henan.html">🏛️ 河南</option><option value="guangdong.html" selected>🌃 广东</option>
+      </select>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h2>岭南大地 · 开放广东</h2>
+    <p>早茶味之乡，大湾区之先锋</p>
+    <button onclick="alert('欢迎来到广东！🥟')">开始探索</button>
+  </section>
+
+  <section class="cards" id="features">
+    <div class="card" onclick="openDetail('food')">
+      <img src="images/gd_food.jpg" alt="广式早茶点心拼盘">
+      <div class="body">
+        <h3>🥟 粤菜早茶</h3>
+        <p>“食在广州”：广式早茶点心精致考究，虾饺、烧卖、叉烧包、肠粉……一盅两件，是广东人雷打不动的生活仪式。</p>
+        <span class="tag">食在广州</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+    <div class="card" onclick="openDetail('culture')">
+      <img src="images/gd_culture.jpg" alt="田野间的开平碉楼">
+      <div class="body">
+        <h3>🏛️ 开平碉楼</h3>
+        <p>开平碉楼与村落中西合璧，是华侨回乡建造的防卫民居，2007年列入世界遗产名录，是广东首个世界文化遗产。</p>
+        <span class="tag">世界遗产</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+    <div class="card" onclick="openDetail('nature')">
+      <img src="images/gd_nature.jpg" alt="丹霞山阳元石与赤壁丹崖">
+      <div class="body">
+        <h3>🏞️ 丹霞山</h3>
+        <p>丹霞山是“丹霞地貌”的命名地，赤壁丹崖与绿树碧水相映；2010年以“中国丹霞”列入世界自然遗产名录。</p>
+        <span class="tag">世界自然遗产</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+    <div class="card" onclick="openDetail('city')">
+      <img src="images/gd_city.jpg" alt="广州塔与珠江新城天际线">
+      <div class="body">
+        <h3>🌃 活力湾区</h3>
+        <p>广州塔“小蛮腰”矗立珠江之畔，总高600米；珠江夜游与城市灯光秀，展现广东敢为人先的现代活力。</p>
+        <span class="tag">改革前沿</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal-mask" id="modalMask" onclick="if(event.target===this)closeDetail()">
+    <div class="modal">
+      <img class="cover" id="modalImg" src="" alt="">
+      <button class="close-btn" onclick="closeDetail()" title="关闭">✕</button>
+      <div class="detail">
+        <h2 id="modalTitle"></h2>
+        <p class="intro" id="modalIntro"></p>
+        <h4 id="modalListTitle"></h4>
+        <ul id="modalList"></ul>
+        <div class="fact" id="modalFact"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 岭南广东 · 欢迎您 · 这是一个简单的示例页面</p>
+    <p>配图来源：Wikimedia Commons（开放授权图片）</p>
+  </footer>
+
+  <script>
+    // 下拉框切换省份页面
+    function switchPage(url) { if (url) location.href = url; }
+    const DETAILS = {
+      food: {
+        img: "images/gd_food.jpg",
+        title: "🥟 粤菜早茶 · 食在广州",
+        intro: "粤菜是中国四大菜系之一，讲究清而不淡、鲜而不俗、嫩而不生、油而不腻。广州早茶文化源远流长，“一盅两件”（一壶茶、两笼点心）是广东人日常生活的仪式：虾饺、烧卖、肠粉、萝卜糕，点心品种多达数百种。",
+        listTitle: "代表美食",
+        list: ["虾饺与干蒸烧卖：早茶“四大天王”之首","叉烧包与肠粉：街头茶楼的灵魂","烧鹅与白切鸡：粤菜烧味与原汁原味的代表","双皮奶与姜撞奶：顺德甜品的收官之作"],
+        fact: "💡 小知识：广式早茶的“饮茶”习俗起源于清代咸丰年间的“一厘馆”（廉价茶摊），如今已发展为“一盅两件、叹早茶”的岭南生活方式。"
+      },
+      culture: {
+        img: "images/gd_culture.jpg",
+        title: "🏛️ 开平碉楼 · 世界遗产",
+        intro: "开平碉楼位于广东开平市，兴起于明末清初、鼎盛于20世纪初。海外华侨汇款回乡，兴建集防卫、居住于一体的中西合璧式塔楼，现存1833座，散落于稻田之间，是世界上独一无二的乡土建筑奇观。",
+        listTitle: "推荐打卡点",
+        list: ["自力村：铭石楼、云幻楼等碉楼群与稻田相映","立园：中西合璧的私家园林别墅","锦江里：瑞石楼等“开平第一楼”碉楼群","马降龙：竹林掩映中的原生态碉楼村落"],
+        fact: "💡 小知识：开平碉楼融合了古希腊、古罗马、哥特、拜占庭等建筑风格，被专家称为“散落在田野里的世界建筑艺术博物馆”。"
+      },
+      nature: {
+        img: "images/gd_nature.jpg",
+        title: "🏞️ 丹霞山 · 世界自然遗产",
+        intro: "丹霞山位于广东韶关仁化县，是“丹霞地貌”的命名地与类型代表地。红色砂砾岩峰林拔地而起，锦江蜿蜒穿行其间，阳元石、阴元石、睡美人等奇石惟妙惟肖，构成“色如渥丹、灿若明霞”的天然画廊。",
+        listTitle: "推荐打卡点",
+        list: ["长老峰：观日出与云海的绝佳平台","阳元石：天下第一奇石","锦江游船：水上丹霞画廊","翔龙湖：碧水丹崖相映成趣"],
+        fact: "💡 小知识：全球地理学名词“丹霞地貌”即以丹霞山命名——这里是世界丹霞地貌研究的“模式地”，已发现同类地貌全球超过1200处。"
+      },
+      city: {
+        img: "images/gd_city.jpg",
+        title: "🌃 活力湾区 · 改革前沿",
+        intro: "广东是中国经济第一大省与全球制造业基地。广州塔昵称“小蛮腰”，总高600米，是中国第一高塔；珠江两岸，珠江新城的摩天楼群与老城的骑楼街交相辉映，古今交融、开放包容。",
+        listTitle: "推荐打卡点",
+        list: ["广州塔：塔顶摩天轮与极速云霄","珠江夜游：两岸灯光秀与猎德大桥夜景","深圳平安金融中心：“奇迹之城”的天际线","港珠澳大桥：粤港澳大湾区的世纪工程"],
+        fact: "💡 小知识：广州塔由24根钢柱旋转45度编织而成，腰部最细处直径仅约30米，因而得名“小蛮腰”；塔顶摩天轮是世界最高的横向摩天轮。"
+      }
+    };
+    function openDetail(id) {
+      const d = DETAILS[id];
+      if (!d) return;
+      document.getElementById("modalImg").src = d.img;
+      document.getElementById("modalImg").alt = d.title;
+      document.getElementById("modalTitle").textContent = d.title;
+      document.getElementById("modalIntro").textContent = d.intro;
+      document.getElementById("modalListTitle").textContent = d.listTitle;
+      const ul = document.getElementById("modalList");
+      ul.innerHTML = "";
+      d.list.forEach(t => { const li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+      document.getElementById("modalFact").textContent = d.fact;
+      document.getElementById("modalMask").classList.add("show");
+      document.body.style.overflow = "hidden";
+    }
+    function closeDetail() {
+      document.getElementById("modalMask").classList.remove("show");
+      document.body.style.overflow = "";
+    }
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetail(); });
+  </script>
+</body>
+</html>
