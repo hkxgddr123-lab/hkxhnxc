@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>三晋山西 · 欢迎您</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #f5ede0 100%);
+      color: #333; min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(90deg, #b5450a, #d4783b);
+      color: #fff; padding: 14px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: sticky; top: 0; z-index: 10;
+    }
+    header h1 { font-size: 22px; }
+    .head-right { display: flex; align-items: center; gap: 18px; }
+    select#pageSwitch {
+      padding: 8px 14px; font-size: 14px; border: none; border-radius: 8px;
+      background: #fff; color: #333; cursor: pointer; outline: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    nav a { color: #fff; text-decoration: none; font-size: 15px; opacity: 0.9; }
+    nav a:hover { opacity: 1; text-decoration: underline; }
+    .hero {
+      text-align: center; padding: 80px 20px 60px;
+      background: linear-gradient(rgba(20,20,20,0.45), rgba(20,20,20,0.45)),
+                  radial-gradient(circle at 30% 40%, #d4783b, #b5450a);
+      color: #fff;
+    }
+    .hero h2 { font-size: 42px; margin-bottom: 16px; letter-spacing: 4px; }
+    .hero p { font-size: 18px; opacity: 0.9; }
+    .hero button {
+      margin-top: 28px; padding: 12px 36px; font-size: 16px; border: none;
+      border-radius: 24px; background: #ffb400; color: #333; cursor: pointer;
+      font-weight: bold; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hero button:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.25); }
+    .cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 28px; max-width: 1160px; margin: -30px auto 0; padding: 0 20px;
+    }
+    .card {
+      background: #fff; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      transition: transform 0.25s, box-shadow 0.25s;
+      display: flex; flex-direction: column; cursor: pointer;
+    }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 10px 24px rgba(0,0,0,0.14); }
+    .card img { width: 100%; height: 180px; object-fit: cover; display: block; }
+    .card .body { padding: 20px 22px 24px; }
+    .card h3 { font-size: 19px; margin-bottom: 10px; color: #b5450a; display: flex; align-items: center; gap: 8px; }
+    .card p { font-size: 14px; color: #666; line-height: 1.75; text-align: justify; }
+    .card .tag { display: inline-block; margin-top: 12px; font-size: 12px; color: #b5450a; background: #fef0e4; border-radius: 10px; padding: 3px 10px; }
+    .card .more { margin-top: 10px; font-size: 13px; color: #d4783b; font-weight: bold; }
+    .modal-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; padding: 24px; }
+    .modal-mask.show { display: flex; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal { background: #fff; border-radius: 16px; width: 100%; max-width: 760px; max-height: 86vh; overflow-y: auto; position: relative; animation: popUp 0.28s ease; }
+    @keyframes popUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .modal img.cover { width: 100%; height: 280px; object-fit: cover; display: block; border-radius: 16px 16px 0 0; }
+    .modal .close-btn {
+      position: sticky; top: 12px; margin-left: calc(100% - 56px);
+      width: 40px; height: 40px; border: none; border-radius: 50%;
+      background: rgba(0,0,0,0.45); color: #fff; font-size: 20px; cursor: pointer;
+      line-height: 1; margin-top: -292px; margin-bottom: 252px;
+    }
+    .modal .close-btn:hover { background: rgba(0,0,0,0.7); }
+    .modal .detail { padding: 26px 32px 32px; }
+    .modal .detail h2 { color: #b5450a; font-size: 26px; margin-bottom: 14px; }
+    .modal .detail p.intro { font-size: 15px; line-height: 1.9; color: #555; text-align: justify; margin-bottom: 18px; }
+    .modal .detail h4 { font-size: 15px; color: #b5450a; margin: 16px 0 8px; border-left: 4px solid #d4783b; padding-left: 8px; }
+    .modal .detail ul { list-style: none; }
+    .modal .detail ul li { font-size: 14px; color: #666; line-height: 1.9; padding-left: 18px; position: relative; }
+    .modal .detail ul li::before { content: ""; position: absolute; left: 2px; top: 11px; width: 7px; height: 7px; border-radius: 50%; background: #d4783b; }
+    .modal .fact { margin-top: 18px; background: #fff8e6; border: 1px solid #ffe3a0; border-radius: 10px; padding: 12px 16px; font-size: 13.5px; color: #8a6d1a; line-height: 1.8; }
+    footer { text-align: center; padding: 30px 20px; margin-top: 60px; background: #b5450a; color: rgba(255,255,255,0.75); font-size: 13px; line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🏯 三晋山西</h1>
+    <div class="head-right">
+      <nav><a href="#features">本页特色</a></nav>
+      <select id="pageSwitch" onchange="switchPage(this.value)" title="切换省份页面">
+        <option value="sichuan.html">🐼 四川</option><option value="index.html">🏛️ 河南</option><option value="guangdong.html">🌃 广东</option><option value="shanxi.html" selected>🏯 山西</option><option value="hunan.html">🌶️ 湖南</option>
+      </select>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h2>表里山河 · 晋善晋美</h2>
+    <p>五千年文明看山西，地上文物甲天下</p>
+    <button onclick="alert('欢迎来到山西！🏯')">开始探索</button>
+  </section>
+
+  <section class="cards" id="features">
+    <div class="card" onclick="openDetail('yungang')">
+      <img src="images/sx_yungang.jpg" alt="云冈石窟大佛">
+      <div class="body">
+        <h3>🗿 云冈石窟</h3>
+        <p>云冈石窟位于大同市西郊武周山南麓，始凿于北魏，现存主要洞窟45个、造像51000余尊，是世界三大石窟之一，2001年列入世界文化遗产。</p>
+        <span class="tag">世界遗产</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+    <div class="card" onclick="openDetail('pingyao')">
+      <img src="images/sx_pingyao.jpg" alt="平遥古城全景">
+      <div class="body">
+        <h3>🏛️ 平遥古城</h3>
+        <p>平遥古城始建于西周，距今2800余年，是中国保存最完整的明清县城。日升昌票号"汇通天下"，古城墙、县衙、文庙完整如初。</p>
+        <span class="tag">世界遗产</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+    <div class="card" onclick="openDetail('wutai')">
+      <img src="images/sx_wutai.jpg" alt="五台山寺庙群">
+      <div class="body">
+        <h3>⛰️ 五台山</h3>
+        <p>五台山位列中国佛教四大名山之首，是文殊菩萨的道场。五峰耸立、清凉圣境，现存唐代以来寺庙68座，为世界文化景观遗产。</p>
+        <span class="tag">佛教圣地</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+    <div class="card" onclick="openDetail('food')">
+      <img src="images/sx_food.jpg" alt="大同刀削面">
+      <div class="body">
+        <h3>🍜 山西面食</h3>
+        <p>"世界面食在中国，中国面食在山西"。刀削面、拉面、剔尖、猫耳朵……山西面食多达280余种，配以老陈醋，堪称一绝。</p>
+        <span class="tag">面食之都</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal-mask" id="modalMask" onclick="if(event.target===this)closeDetail()">
+    <div class="modal">
+      <button class="close-btn" onclick="closeDetail()" title="关闭">✕</button>
+      <img class="cover" id="modalImg" src="" alt="">
+      <div class="detail">
+        <h2 id="modalTitle"></h2>
+        <p class="intro" id="modalIntro"></p>
+        <h4 id="modalListTitle"></h4>
+        <ul id="modalList"></ul>
+        <div class="fact" id="modalFact"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 三晋山西 · 欢迎您 · 这是一个简单的示例页面</p>
+    <p>配图来源：Wikimedia Commons（开放授权图片）</p>
+  </footer>
+
+  <script>
+    function switchPage(url) { if (url) location.href = url; }
+    const DETAILS = {
+      yungang: {
+        img: "images/sx_yungang.jpg",
+        title: "🗿 云冈石窟 · 世界遗产",
+        intro: "云冈石窟位于山西大同城西16公里的武周山南麓，开凿于北魏和平元年（公元460年），历时约60年。石窟依山而凿，东西绵延约1公里，现存主要洞窟45个、大小窟龛252个、石雕造像51000余尊，代表了公元5至6世纪中国佛教石窟艺术的最高成就。",
+        listTitle: "推荐打卡点",
+        list: ["昙曜五窟（第16-20窟）：云冈最早开凿的五座皇家石窟，佛像磅礴大气","第5-6窟：云冈最大的洞窟，内有高达17米的坐佛","第20窟露天大佛：云冈石窟的标志性造像，释迦牟尼坐像","云冈博物馆：数字化展厅还原石窟开凿历史与工艺"],
+        fact: "💡 小知识：云冈石窟与敦煌莫高窟、洛阳龙门石窟并称“中国三大石窟”。昙曜五窟的五尊大佛据考证象征北魏道武、明元、太武、景穆、文成五位皇帝，是“帝佛合一”的体现。"
+      },
+      pingyao: {
+        img: "images/sx_pingyao.jpg",
+        title: "🏛️ 平遥古城 · 世界遗产",
+        intro: "平遥古城位于山西晋中市平遥县，始建于西周宣王时期（公元前827—前782年），距今已有2800余年历史。明洪武三年扩建，是目前中国保存最完整的明清时期县城，完整保留了城墙、街道、店铺、民居、寺庙等古代城市格局。",
+        listTitle: "推荐打卡点",
+        list: ["平遥古城墙：周长6163米，高约12米，四角角楼气势恢宏","日升昌票号：中国第一家票号，被誉为“中国现代银行的鼻祖”","平遥县衙：国内保存最完整的古代县衙","明清一条街（南大街）：青石板路面，两侧古店铺林立"],
+        fact: "💡 小知识：日升昌票号成立于清道光三年（1823年），鼎盛时期分号遍布全国30余城，甚至远达日本、朝鲜、俄罗斯，真正做到了“汇通天下”——堪称19世纪中国的“华尔街”。"
+      },
+      wutai: {
+        img: "images/sx_wutai.jpg",
+        title: "⛰️ 五台山 · 佛教圣地",
+        intro: "五台山位于山西忻州市五台县，由五座顶如平台的山峰组成，最高峰北台海拔3061米，有“华北屋脊”之称。五台山是文殊菩萨的道场，居中国佛教四大名山之首。自东汉永平年间建寺起，现存唐代以来寺庙68座、佛像三万余尊。",
+        listTitle: "推荐打卡点",
+        list: ["显通寺：五台山历史最悠久的寺庙，始建于东汉","塔院寺：五台山标志——大白塔所在地，高75.3米","菩萨顶：清代皇家寺庙，康熙乾隆多次驻跸","黛螺顶：登1080级台阶朝拜“小朝台”，一览五台全景"],
+        fact: "💡 小知识：五台山融合了汉传佛教（青庙）与藏传佛教（黄庙），是中国唯一一处汉藏佛教共存的佛教名山。2009年，五台山以“文化景观”列入世界遗产名录。"
+      },
+      food: {
+        img: "images/sx_food.jpg",
+        title: "🍜 山西面食 · 面艺天下",
+        intro: "“世界面食在中国，中国面食在山西”。山西面食历史悠久，可追溯到2000年前的汉代。刀削面、拉面、剔尖、猫耳朵、栲栳栳……山西面食品种多达280余种，配以正宗山西老陈醋，形成了独特的面食文化体系。",
+        listTitle: "代表美食",
+        list: ["刀削面：飞刀削面如柳叶入锅，劲道爽滑，山西面食的王牌","剔尖：用筷子将面团剔入沸水，形如小鱼，也叫“拨鱼面”","猫耳朵：拇指捻出贝壳状小面片，筋道可爱","栲栳栳：莜面卷成筒状蒸制，蘸羊肉臊子或醋蒜汁食用"],
+        fact: "💡 小知识：山西老陈醋距今已有3000余年历史，以“绵、酸、香、甜、鲜”五味调和著称。山西人年均食醋量全国第一，民间流传“山西人缴枪不缴醋壶”的说法。"
+      }
+    };
+    function openDetail(id) {
+      const d = DETAILS[id];
+      if (!d) return;
+      document.getElementById("modalImg").src = d.img;
+      document.getElementById("modalImg").alt = d.title;
+      document.getElementById("modalTitle").textContent = d.title;
+      document.getElementById("modalIntro").textContent = d.intro;
+      document.getElementById("modalListTitle").textContent = d.listTitle;
+      const ul = document.getElementById("modalList");
+      ul.innerHTML = "";
+      d.list.forEach(t => { const li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+      document.getElementById("modalFact").textContent = d.fact;
+      document.getElementById("modalMask").classList.add("show");
+      document.body.style.overflow = "hidden";
+    }
+    function closeDetail() {
+      document.getElementById("modalMask").classList.remove("show");
+      document.body.style.overflow = "";
+    }
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetail(); });
+  </script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>潇湘湖南 · 欢迎您</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #fef0f0 100%);
+      color: #333; min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(90deg, #c41e3a, #e8533f);
+      color: #fff; padding: 14px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: sticky; top: 0; z-index: 10;
+    }
+    header h1 { font-size: 22px; }
+    .head-right { display: flex; align-items: center; gap: 18px; }
+    select#pageSwitch {
+      padding: 8px 14px; font-size: 14px; border: none; border-radius: 8px;
+      background: #fff; color: #333; cursor: pointer; outline: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    nav a { color: #fff; text-decoration: none; font-size: 15px; opacity: 0.9; }
+    nav a:hover { opacity: 1; text-decoration: underline; }
+    .hero {
+      text-align: center; padding: 80px 20px 60px;
+      background: linear-gradient(rgba(20,20,20,0.45), rgba(20,20,20,0.45)),
+                  radial-gradient(circle at 30% 40%, #e8533f, #c41e3a);
+      color: #fff;
+    }
+    .hero h2 { font-size: 42px; margin-bottom: 16px; letter-spacing: 4px; }
+    .hero p { font-size: 18px; opacity: 0.9; }
+    .hero button {
+      margin-top: 28px; padding: 12px 36px; font-size: 16px; border: none;
+      border-radius: 24px; background: #ffb400; color: #333; cursor: pointer;
+      font-weight: bold; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hero button:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.25); }
+    .cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 28px; max-width: 1160px; margin: -30px auto 0; padding: 0 20px;
+    }
+    .card {
+      background: #fff; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      transition: transform 0.25s, box-shadow 0.25s;
+      display: flex; flex-direction: column; cursor: pointer;
+    }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 10px 24px rgba(0,0,0,0.14); }
+    .card img { width: 100%; height: 180px; object-fit: cover; display: block; }
+    .card .body { padding: 20px 22px 24px; }
+    .card h3 { font-size: 19px; margin-bottom: 10px; color: #c41e3a; display: flex; align-items: center; gap: 8px; }
+    .card p { font-size: 14px; color: #666; line-height: 1.75; text-align: justify; }
+    .card .tag { display: inline-block; margin-top: 12px; font-size: 12px; color: #c41e3a; background: #fef0f0; border-radius: 10px; padding: 3px 10px; }
+    .card .more { margin-top: 10px; font-size: 13px; color: #e8533f; font-weight: bold; }
+    .modal-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; padding: 24px; }
+    .modal-mask.show { display: flex; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal { background: #fff; border-radius: 16px; width: 100%; max-width: 760px; max-height: 86vh; overflow-y: auto; position: relative; animation: popUp 0.28s ease; }
+    @keyframes popUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .modal img.cover { width: 100%; height: 280px; object-fit: cover; display: block; border-radius: 16px 16px 0 0; }
+    .modal .close-btn {
+      position: sticky; top: 12px; margin-left: calc(100% - 56px);
+      width: 40px; height: 40px; border: none; border-radius: 50%;
+      background: rgba(0,0,0,0.45); color: #fff; font-size: 20px; cursor: pointer;
+      line-height: 1; margin-top: -292px; margin-bottom: 252px;
+    }
+    .modal .close-btn:hover { background: rgba(0,0,0,0.7); }
+    .modal .detail { padding: 26px 32px 32px; }
+    .modal .detail h2 { color: #c41e3a; font-size: 26px; margin-bottom: 14px; }
+    .modal .detail p.intro { font-size: 15px; line-height: 1.9; color: #555; text-align: justify; margin-bottom: 18px; }
+    .modal .detail h4 { font-size: 15px; color: #c41e3a; margin: 16px 0 8px; border-left: 4px solid #e8533f; padding-left: 8px; }
+    .modal .detail ul { list-style: none; }
+    .modal .detail ul li { font-size: 14px; color: #666; line-height: 1.9; padding-left: 18px; position: relative; }
+    .modal .detail ul li::before { content: ""; position: absolute; left: 2px; top: 11px; width: 7px; height: 7px; border-radius: 50%; background: #e8533f; }
+    .modal .fact { margin-top: 18px; background: #fff8e6; border: 1px solid #ffe3a0; border-radius: 10px; padding: 12px 16px; font-size: 13.5px; color: #8a6d1a; line-height: 1.8; }
+    footer { text-align: center; padding: 30px 20px; margin-top: 60px; background: #c41e3a; color: rgba(255,255,255,0.75); font-size: 13px; line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🌶️ 潇湘湖南</h1>
+    <div class="head-right">
+      <nav><a href="#features">本页特色</a></nav>
+      <select id="pageSwitch" onchange="switchPage(this.value)" title="切换省份页面">
+        <option value="sichuan.html">🐼 四川</option><option value="index.html">🏛️ 河南</option><option value="guangdong.html">🌃 广东</option><option value="shanxi.html">🏯 山西</option><option value="hunan.html" selected>🌶️ 湖南</option>
+      </select>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h2>锦绣潇湘 · 伟人故里</h2>
+    <p>张家界仙境、湘菜火辣，洞庭湖鱼米之乡</p>
+    <button onclick="alert('欢迎来到湖南！🌶️')">开始探索</button>
+  </section>
+
+  <section class="cards" id="features">
+    <div class="card" onclick="openDetail('zhangjiajie')">
+      <img src="images/hun_zhangjiajie.jpg" alt="张家界砂岩峰林">
+      <div class="body">
+        <h3>🏔️ 张家界</h3>
+        <p>张家界武陵源以独特的石英砂岩峰林地貌闻名于世，三千奇峰拔地而起、八百秀水蜿蜒其间。电影《阿凡达》的悬浮山灵感即源于此。</p>
+        <span class="tag">世界自然遗产</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+    <div class="card" onclick="openDetail('yuelu')">
+      <img src="images/hun_yuelu.jpg" alt="岳麓书院大门">
+      <div class="body">
+        <h3>📚 岳麓书院</h3>
+        <p>岳麓书院位于长沙岳麓山下，创建于北宋开宝九年（公元976年），是中国古代四大书院之一。千年学府弦歌不绝，"惟楚有材，于斯为盛"。</p>
+        <span class="tag">千年学府</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+    <div class="card" onclick="openDetail('fenghuang')">
+      <img src="images/hun_fenghuang.jpg" alt="凤凰古城沱江吊脚楼">
+      <div class="body">
+        <h3>🏘️ 凤凰古城</h3>
+        <p>凤凰古城位于湘西土家族苗族自治州，沱江穿城而过，吊脚楼临水而建。沈从文笔下的《边城》让这座千年古镇名扬天下，被誉为"中国最美小城"。</p>
+        <span class="tag">最美小城</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+    <div class="card" onclick="openDetail('food')">
+      <img src="images/hun_food.jpg" alt="长沙臭豆腐">
+      <div class="body">
+        <h3>🌶️ 湘菜美食</h3>
+        <p>湘菜是中国八大菜系之一，以香辣、鲜辣、酸辣著称。剁椒鱼头、辣椒炒肉、长沙臭豆腐、口味虾……辣得酣畅、香得过瘾，是湖湘性格的味觉表达。</p>
+        <span class="tag">八大菜系</span>
+        <div class="more">点击查看详情 →</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal-mask" id="modalMask" onclick="if(event.target===this)closeDetail()">
+    <div class="modal">
+      <button class="close-btn" onclick="closeDetail()" title="关闭">✕</button>
+      <img class="cover" id="modalImg" src="" alt="">
+      <div class="detail">
+        <h2 id="modalTitle"></h2>
+        <p class="intro" id="modalIntro"></p>
+        <h4 id="modalListTitle"></h4>
+        <ul id="modalList"></ul>
+        <div class="fact" id="modalFact"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 潇湘湖南 · 欢迎您 · 这是一个简单的示例页面</p>
+    <p>配图来源：Wikimedia Commons（开放授权图片）</p>
+  </footer>
+
+  <script>
+    function switchPage(url) { if (url) location.href = url; }
+    const DETAILS = {
+      zhangjiajie: {
+        img: "images/hun_zhangjiajie.jpg",
+        title: "🏔️ 张家界 · 世界自然遗产",
+        intro: "张家界武陵源风景名胜区位于湖南西北部，以世界罕见的石英砂岩峰林峡谷地貌闻名于世。三千余座石英砂岩柱峰拔地而起，金鞭溪、索溪峪蜿蜒其间，云雾缭绕时宛如仙境。1992年被联合国教科文组织列入世界自然遗产名录，也是电影《阿凡达》悬浮山的灵感来源。",
+        listTitle: "推荐打卡点",
+        list: ["袁家界：乾坤柱（阿凡达悬浮山原型）、天下第一桥","天子山：云海日出、御笔峰、仙女散花","金鞭溪：全长5.7公里，溪水清澈、两岸奇峰林立","天门山：天门洞、99道弯盘山公路、玻璃栈道"],
+        fact: "💡 小知识：张家界石英砂岩峰林地貌形成于约3.8亿年前的泥盆纪，是全球唯一以“张家界地貌”命名的地质类型。2010年，电影《阿凡达》导演卡梅隆公开承认悬浮山灵感来源于张家界。"
+      },
+      yuelu: {
+        img: "images/hun_yuelu.jpg",
+        title: "📚 岳麓书院 · 千年学府",
+        intro: "岳麓书院位于长沙岳麓山清风峡口，创建于北宋开宝九年（公元976年），是中国古代四大书院之一，也是目前唯一仍在办学的高等学府——作为湖南大学的前身延续至今。大门楹联“惟楚有材，于斯为盛”道尽了千年来湖湘人才的鼎盛。",
+        listTitle: "推荐打卡点",
+        list: ["岳麓书院古建筑群：赫曦台、大门、二门、讲堂、御书楼","文庙：祭祀孔子的古建筑群，气势庄严","岳麓山：爱晚亭（杜牧“停车坐爱枫林晚”诗意）、麓山寺","中国书院博物馆：中国唯一以书院为主题的专题博物馆"],
+        fact: "💡 小知识：岳麓书院自宋代以来培养了大批影响中国历史的人物，包括明末思想家王夫之、清代“睁眼看世界第一人”魏源、湘军领袖曾国藩与左宗棠，以及近代革命先驱蔡锷等。"
+      },
+      fenghuang: {
+        img: "images/hun_fenghuang.jpg",
+        title: "🏘️ 凤凰古城 · 最美小城",
+        intro: "凤凰古城位于湘西土家族苗族自治州凤凰县，因背靠青山、形似凤凰而得名。沱江穿城而过，两岸吊脚楼鳞次栉比，青石板路蜿蜒幽深。沈从文先生的小说《边城》以这里为背景，让这座千年古城成为无数人心中“诗与远方”的象征。",
+        listTitle: "推荐打卡点",
+        list: ["沱江泛舟：从北门码头乘乌篷船顺流而下，赏两岸吊脚楼","虹桥：始建于明代的古桥，桥上可俯瞰沱江全景","沈从文故居：一座湘西四合院，陈列着先生的手稿与遗物","万名塔与万寿宫：沱江边的标志性建筑群"],
+        fact: "💡 小知识：沈从文（1902—1988）是凤凰人，其代表作《边城》以湘西茶峒为原型，但凤凰古城因沈从文的巨大影响而成为“边城”的化身。每年有数百万游客追寻着“翠翠”的故事来到凤凰。"
+      },
+      food: {
+        img: "images/hun_food.jpg",
+        title: "🌶️ 长沙臭豆腐 · 湘味经典",
+        intro: "长沙臭豆腐是湖南最具代表性的街头小吃，以“闻着臭、吃着香”闻名全国。豆腐经特制卤水发酵，入油锅炸至外焦里嫩，灌入秘制汤汁，佐以辣椒、蒜泥、香菜，一口咬下汁水四溢、香辣过瘾。长沙火宫殿的臭豆腐更是享誉百年。",
+        listTitle: "代表美食",
+        list: ["长沙臭豆腐：外酥里嫩，灌汤一口爆浆，火宫殿百年老字号","剁椒鱼头：新鲜花鲢鱼头铺满红绿剁椒蒸制，鲜辣入味","辣椒炒肉：湖南家喻户晓的下饭菜，猪肉焦香、辣椒鲜辣","口味虾：夏季夜宵之王，麻辣鲜香，配冰啤酒堪称一绝"],
+        fact: "💡 小知识：湖南人爱吃辣是有历史渊源的——湖南气候湿热，辣椒可驱寒祛湿。传入中国仅400余年的辣椒，已被湖南人吃出了“不怕辣、辣不怕、怕不辣”的三重境界，成为湖湘文化的鲜明符号。"
+      }
+    };
+    function openDetail(id) {
+      const d = DETAILS[id];
+      if (!d) return;
+      document.getElementById("modalImg").src = d.img;
+      document.getElementById("modalImg").alt = d.title;
+      document.getElementById("modalTitle").textContent = d.title;
+      document.getElementById("modalIntro").textContent = d.intro;
+      document.getElementById("modalListTitle").textContent = d.listTitle;
+      const ul = document.getElementById("modalList");
+      ul.innerHTML = "";
+      d.list.forEach(t => { const li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+      document.getElementById("modalFact").textContent = d.fact;
+      document.getElementById("modalMask").classList.add("show");
+      document.body.style.overflow = "hidden";
+    }
+    function closeDetail() {
+      document.getElementById("modalMask").classList.remove("show");
+      document.body.style.overflow = "";
+    }
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetail(); });
+  </script>
+</body>
+</html>
